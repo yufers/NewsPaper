@@ -1,19 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-article = 'A'
-news = 'N'
-
-POST_TYPE = [
-    (article, 'Статья'),
-    (news, 'Новость')
-]
-
 class Author(models.Model):
     rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    def update_rating(self, author):
+    def update_rating(author):
         user_post_raitings = Post.objects.filter(author=author).values('rating')
         user_post_rating_sum = 0
         for user_post_raiting in user_post_raitings:
@@ -29,19 +21,20 @@ class Author(models.Model):
         for user_post_comment_raiting in user_post_comment_raitings:
             user_post_comment_rating_sum = user_post_comment_rating_sum + user_post_comment_raiting['rating']
 
-#        user_post_ids = Post.objects.filter(user=user.id).values('id')
-#        user_post_comment_rating_sum = 0
-#        for user_post_id in user_post_ids:
-#            user_post_comment_ids = Comment.objects.filter(post=user_post_id['id']).values('rating')
-#            for user_post_comment_id in user_post_comment_ids:
-#                user_post_comment_rating_sum = user_post_comment_rating_sum + user_post_comment_id['rating']
-
-        return user_post_rating_sum * 3 + user_comment_rating_sum + user_post_comment_rating_sum
+        author.rating = user_post_rating_sum * 3 + user_comment_rating_sum + user_post_comment_rating_sum
 
 class Category(models.Model):
     name = models.CharField(max_length=150, unique=True)
 
 class Post(models.Model):
+    article = 'A'
+    news = 'N'
+
+    POST_TYPE = [
+        (article, 'Статья'),
+        (news, 'Новость')
+    ]
+
     type = models.CharField(max_length=1, choices=POST_TYPE, default=article)
     creation_date = models.DateTimeField(auto_now_add=True)
     article_subject = models.CharField(max_length=150)

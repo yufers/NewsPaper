@@ -1,0 +1,80 @@
+>>> from django.db import models
+>>> from django.contrib.auth.models import User
+>>> from news.models import *
+>>>
+>>> User.objects.create_user('user_1')
+<User: user_1>
+>>> User.objects.create_user('user_2')
+<User: user_2>
+>>>
+>>> user1 = User.objects.get(username='user_1')
+>>> author1 = Author.objects.create(user=user1)
+>>>
+>>> user2 = User.objects.get(username='user_2')
+>>> author2 = Author.objects.create(user=user2)
+>>>
+>>> category1 = Category.objects.create(name='Политика')
+>>> category2 = Category.objects.create(name='Спорт')
+>>> category3 = Category.objects.create(name='Музыка')
+>>> category4 = Category.objects.create(name='Погода')
+>>>
+>>> post1 = Post.objects.create(type=Post.article, article_subject='Новости футбола', article_text='Из-за сильных дождей матч перенесён на другой день', author=author1)
+>>> post2 = Post.objects.create(type=Post.article, article_subject='Биография неизвестного исполнителя', article_text='Сегодня мы расскажем вам о биографии этого знаменитого исполнителя', author=author1)
+>>> post3 = Post.objects.create(type=Post.news, article_subject='Метеоритный дождь', article_text='В Сибири возможно падение метеоритов, это произойдет в пятницу', author=author2)
+>>>
+>>> post1.category.add(category2)
+>>> post1.category.add(category4)
+>>> post2.category.add(category3)
+>>> post3.category.add(category1)
+>>> post3.category.add(category4)
+>>>
+>>> comment1 = Comment.objects.create(comment_text='Круто', post=post1, user=user1)
+>>> comment2 = Comment.objects.create(comment_text='Вау', post=post2, user=user2)
+>>> comment3 = Comment.objects.create(comment_text='Ужас', post=post3, user=user2)
+>>> comment4 = Comment.objects.create(comment_text='Невозможно', post=post3, user=user1)
+>>>
+>>> comment1.like()
+>>> comment1.like()
+>>> comment1.like()
+>>> comment1.dislike()
+>>> comment1.save()
+>>>
+>>> comment2.like()
+>>> comment2.save()
+>>>
+>>> comment3.like()
+>>> comment3.like()
+>>> commen3.save()
+>>>
+>>> comment4.like()
+>>> comment4.dislike()
+>>> comment4.save()
+>>>
+>>> post1.like()
+>>> post1.save()
+>>>
+>>> post2.like()
+>>> post2.like()
+>>> post2.save()
+>>>
+>>> post3.like()
+>>> post3.like()
+>>> post3.dislike()
+>>> post3.save()
+>>>
+>>> Author.update_rating(author1)
+>>> author1.save()
+>>> Author.update_rating(author2)
+>>> author2.save()
+>>>
+>>> authors = Author.objects.all().order_by('-rating').values('user__username', 'rating')
+>>> print(authors[0])
+{'user__username': 'user_1', 'rating': 14}
+>>>
+>>> posts = Post.objects.all().order_by('-rating').values('id', 'creation_date', 'author__user__username', 'rating', 'article_subject')
+>>> best_post = posts[0]
+>>> print(f"{best_post['creation_date']} | {best_post['author__user__username']} | {best_post['rating']} | {best_post['article_subject']} | {Post.objects.get(pk=best_post['id']).preview()} |")
+2022-10-17 16:57:20.557316+00:00 | user_1 | 2 | Биография неизвестного исполнителя | Сегодня мы расскажем вам о биографии этого знаменитого исполнителя... |
+>>> post_comments = Comment.objects.all().order_by('-creation_date').filter(post=Post.objects.get(pk=best_post['id'])).values('creation_date', 'user__username', 'rating', 'comment_text')
+>>> print(post_comments)
+<QuerySet [{'creation_date': datetime.datetime(2022, 10, 17, 17, 8, 17, 614742, tzinfo=datetime.timezone.utc), 'user__username': 'user_2', 'rating': 1, 'comment_text': 'Вау'}]>
