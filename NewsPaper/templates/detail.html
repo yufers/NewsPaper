@@ -1,0 +1,30 @@
+{% extends 'default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+   <h1>Новость</h1>
+
+   <h3>{% current_time '%b %d %Y' %}</h3>
+
+   <table>
+       <tr>
+           <td>Название</td>
+           <td>{{ detail.article_subject|censor }}</td>
+       </tr>
+       <tr>
+           <td>Текст</td>
+           <td>{{ detail.article_text|censor }}</td>
+       </tr>
+       <tr>
+           <td>Дата</td>
+           <td>{{ detail.creation_date|date:'M d Y' }}</td>
+       </tr>
+   <table>
+
+{% endblock content %}

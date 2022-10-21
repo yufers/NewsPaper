@@ -1,0 +1,39 @@
+{% extends 'default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+   <h1>Все новости</h1>
+
+   <h3>{% current_time '%b %d %Y' %}</h3>
+   <h3> {{ breaking_news|default_if_none:"Пока нет строчных новостей!" }} </h3>
+
+   <hr>
+   {% if news %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Новость</td>
+           </tr>
+
+           {% for n in news %}
+           <tr>
+               <td>{{ n.article_subject|censor }}</td>
+               <td>{{ n.creation_date }}</td>
+               <td>{{ n.article_text|censor|truncatechars:20 }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Новостей нет!</h2>
+
+   {% endif %}
+{% endblock content %}
+
