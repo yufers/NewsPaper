@@ -20,6 +20,7 @@ News
                <td>Заголовок</td>
                <td>Дата публикации</td>
                <td>Новость</td>
+               <td>Тип</td>
            </tr>
 
            {% for n in news %}
@@ -27,6 +28,7 @@ News
                <td>{{ n.article_subject|censor }}</td>
                <td>{{ n.creation_date }}</td>
                <td>{{ n.article_text|censor|truncatechars:20 }}</td>
+               <td>{{ n.type }}</td>
            </tr>
            {% endfor %}
 
