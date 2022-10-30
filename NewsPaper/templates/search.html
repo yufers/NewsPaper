@@ -13,7 +13,17 @@ News
    <h3>{% current_time '%b %d %Y' %}</h3>
    <h3> {{ breaking_news|default_if_none:"Пока нет строчных новостей!" }} </h3>
 
-   <hr>
+   <hr/>
+
+   <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+   </form>
+
+   <hr/>
+
    {% if news %}
        <table>
            <tr>
@@ -55,5 +65,6 @@ News
    {% else %}
        <h2>Новостей нет!</h2>
    {% endif %}
+
 {% endblock content %}
 
